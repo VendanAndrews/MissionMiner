@@ -211,7 +211,7 @@ namespace MissionMiner
             InsertState(Offload);
             InsertState(PrepWarp);
             InsertState(MineRoid);
-            InsertState(Traveling, 3000);
+            InsertState(Traveling, 5000);
             return true;
         }
 
@@ -352,7 +352,7 @@ namespace MissionMiner
                 DroneControl.Instance.Start();
                 if(Roid.Distance > MyShip.Modules.Where(Lasers).Min(mod => mod.MaxRange) && MyShip.ToEntity.Mode == EntityMode.Stopped)
                 {
-                    Move.Approach(Roid);
+                    Move.Approach(Roid, (int)Math.Floor(MyShip.Modules.Where(Lasers).Min(mod => mod.MaxRange)));
                     return false;
                 }
                 if(!Roid.LockedTarget && !Roid.LockingTarget && Roid.Distance < MyShip.MaxTargetRange)
