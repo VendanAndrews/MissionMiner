@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Missions>
+  <Mission>
+    <Name>Asteroid Catastrophe</Name>
+    <Damage>
+      <Dealt Primary="Kinetic" Secondary="Thermal"/>
+      <ToDeal Primary="Kinetic" Secondary="Thermal"/>
+    </Damage>
+    <Asteroid>Augumene</Asteroid>
+    <Volume>1080</Volume>
+    <VolumePerRoid>1080</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Bountiful Banidine</Name>
+    <Asteroid>Banidine</Asteroid>
+    <Volume>2000</Volume>
+    <VolumePerRoid>1000</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Burnt Traces</Name>
+    <Asteroid>Augumene</Asteroid>
+    <Volume>1080</Volume>
+    <VolumePerRoid>1080</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Mercium Experiments</Name>
+    <Asteroid>Mercium</Asteroid>
+    <Volume>1080</Volume>
+    <VolumePerRoid>1080</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Starting Simple</Name>
+    <Asteroid>Banidine</Asteroid>
+    <Volume>2000</Volume>
+    <VolumePerRoid>1000</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Passing the ISK</Name>
+    <Asteroid>Augumene</Asteroid>
+    <Volume>1080</Volume>
+    <VolumePerRoid>1080</VolumePerRoid>
+  </Mission>
+</Missions>
