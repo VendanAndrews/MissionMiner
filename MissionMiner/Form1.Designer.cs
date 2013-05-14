@@ -43,6 +43,7 @@
             this.checkLevel1 = new System.Windows.Forms.CheckBox();
             this.lblState = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkUnknownMissionHalt = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkUnknownMissionHalt);
             this.tabPage2.Controls.Add(this.btnOptimizer);
             this.tabPage2.Controls.Add(this.btnAutoModuleConfig);
             this.tabPage2.Controls.Add(this.groupBox1);
@@ -204,6 +206,17 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkUnknownMissionHalt
+            // 
+            this.checkUnknownMissionHalt.AutoSize = true;
+            this.checkUnknownMissionHalt.Location = new System.Drawing.Point(12, 68);
+            this.checkUnknownMissionHalt.Name = "checkUnknownMissionHalt";
+            this.checkUnknownMissionHalt.Size = new System.Drawing.Size(159, 17);
+            this.checkUnknownMissionHalt.TabIndex = 4;
+            this.checkUnknownMissionHalt.Text = "Halt bot on unknown mission";
+            this.checkUnknownMissionHalt.UseVisualStyleBackColor = true;
+            this.checkUnknownMissionHalt.CheckedChanged += new System.EventHandler(this.checkUnknownMissionHalt_CheckedChanged);
+            // 
             // MissionMinerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -217,6 +230,7 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -239,6 +253,7 @@
         private System.Windows.Forms.Button btnOptimizer;
         private System.Windows.Forms.Label lblState;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.CheckBox checkUnknownMissionHalt;
     }
 }
 

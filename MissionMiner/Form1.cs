@@ -44,7 +44,7 @@ namespace MissionMiner
             if (Config.Levels.Contains(2)) checkLevel2.Checked = true;
             if (Config.Levels.Contains(3)) checkLevel3.Checked = true;
             if (Config.Levels.Contains(4)) checkLevel4.Checked = true;
-
+            checkUnknownMissionHalt.Checked = Config.UnknownMissionHalt;
         }
 
         public void GetUIData()
@@ -154,6 +154,12 @@ namespace MissionMiner
             {
                 lblState.Text = "Idle";
             }
+        }
+
+        private void checkUnknownMissionHalt_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.UnknownMissionHalt = checkUnknownMissionHalt.Checked;
+            Config.Save();
         }
 
     }

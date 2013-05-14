@@ -204,7 +204,7 @@ namespace MissionMiner
             }
 
             Console.Log("|oRoute is clear of Low Security systems");
-            Move.ToggleAutopilot(true);
+            Move.Bookmark(CurrentMission.Bookmarks.First(b => b.LocationType == "dungeon"));
             InsertState(CheckMissionCompletion);
             InsertState(Traveling);
             InsertState(Offload);
