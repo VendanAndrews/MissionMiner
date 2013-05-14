@@ -8,9 +8,14 @@ using EveComFramework.Move;
 using EveComFramework.Cargo;
 using EveComFramework.DroneControl;
 using EveComFramework.Targets;
+using EveComFramework.AutoModule;
+using EveComFramework.Optimizer;
+using EveComFramework.Data;
 
 namespace MissionMiner
 {
+    #region UI
+
     class MissionMinerUIData : State
     {
         public Dictionary<string, int> Agents;
@@ -27,16 +32,60 @@ namespace MissionMiner
         }
     }
 
+    #endregion
+
+    #region Settings
+
     class MissionMinerSettings : Settings
     {
-        public string Agent;
+        public bool UnknownMissionHalt = false;
+        public List<int> Levels = new List<int> { 1 };
     }
+
+    #endregion
 
     class MissionMiner : State
     {
+        #region Instantiation
+
+        static MissionMiner _Instance;
+        public static MissionMiner Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new MissionMiner();
+                }
+                return _Instance;
+            }
+        }
+
+        private MissionMiner() : base()
+        {
+        }
+
+        #endregion
+
+        #region Variables
+
+        public MissionMinerSettings Config = new MissionMinerSettings();
+        Logger Console = new Logger("Miner");
+
+        Cargo Cargo = Cargo.Instance;
+        Move Move = Move.Instance;
+        public AutoModule Automodule = AutoModule.Instance;
+        public Optimizer Optimizer = Optimizer.Instance;
+
         AgentMission CurrentMission;
         MissionData CurrentMissionData;
-        public MissionMinerSettings Settings = new MissionMinerSettings();
+        Agent CurrentAgent;
+        List<Agent> AgentQueue;
+        Dictionary<Agent, DateTime> NextDecline = new Dictionary<Agent, DateTime>();
+
+        #endregion
+
+        #region Actions
 
         public void Start()
         {
@@ -44,52 +93,123 @@ namespace MissionMiner
             QueueState(GetNewMission, 5000);
         }
 
-        public bool Offload(object[] Params)
+        #endregion
+
+        #region States
+
+        public bool CheckForMissions(object[] Params)
         {
-            if (MyShip.OreHold == null)
+            if (AgentMission.All.Any(a => a.Type == AgentMission.MissionType.Mining && a.State == AgentMission.MissionState.Accepted))
             {
-                Command.OpenInventory.Execute();
+                CurrentMission = AgentMission.All.FirstOrDefault(a => a.Type == AgentMission.MissionType.Mining && a.State == AgentMission.MissionState.Accepted);
+                CurrentMissionData = MissionData.All.First(m => m.Name == CurrentMission.Name);
+                Console.Log("|oMission found in journal");
+                Console.Log(" |-g{0}", CurrentMission.Name);
+                QueueState(Offload);
+                QueueState(Traveling);
+                QueueState(CheckMissionCompletion);
+            }
+            else
+            {
+                if (CurrentAgent == null)
+                {
+                    if (!AgentQueue.Any())
+                    {
+                        AgentQueue = Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && Config.Levels.Contains(a.Level)).ToList();
+                    }
+                    CurrentAgent = AgentQueue.FirstOrDefault();
+                    AgentQueue.Remove(CurrentAgent);
+                }
+                if (Session.InSpace || Session.StationID == CurrentAgent.StationID)
+                {
+                    CurrentAgent.SetDestination();
+                }
+                QueueState(CheckLowSecAgent);
+            }
+            return true;
+        }
+
+        public bool CheckMissionCompletion(object[] Params)
+        {
+            if (Station.ItemHangar == null)
+            {
+                Command.OpenInventory.Execute(); 
+                return false;
+            } 
+            if (!Station.ItemHangar.IsPrimed)
+            {
+                Station.ItemHangar.MakeActive();
                 return false;
             }
-            if (!MyShip.OreHold.IsPrimed)
+            double MinedAmount = Station.ItemHangar.Items.Where(i => i.Type == CurrentMissionData.Asteroid).Sum(i => i.Quantity * i.Volume);
+            Console.Log("|oMission Status");
+            Console.Log(" |-g{0}% complete", (MinedAmount / CurrentMissionData.Volume).ToString("P0"));
+            if (MinedAmount >= CurrentMissionData.Volume)
             {
-                MyShip.OreHold.MakeActive();
-                return false;
-            }
-            if (MyShip.OreHold.Items.Count > 0)
-            {
-                EVEFrame.Log("Priming OreHold");
-                MyShip.OreHold.Items.MoveTo(Station.ItemHangar);
-                return false;
+                InsertState(CompleteMission, 5000);
+                return true;
             }
 
-            if (MyShip.CargoBay == null)
+            CurrentMission.Bookmarks.First(b => b.LocationType == "dungeon").SetDestination();
+            InsertState(CheckLowSecDungeon);
+            return true;
+        }
+
+        bool Offload(object[] Params)
+        {
+            Cargo.At(CurrentMission.Bookmarks.First(b => b.LocationType == "objective")).Unload();
+            Cargo.At(CurrentMission.Bookmarks.First(b => b.LocationType == "objective"), () => MyShip.OreHold).Unload();
+            return true;
+        }
+
+        bool Traveling(object[] Params)
+        {
+            if (!Move.Idle || !Cargo.Idle || (Session.InSpace && MyShip.ToEntity.Mode == EntityMode.Warping))
             {
-                Command.OpenInventory.Execute();
                 return false;
             }
-            if (!MyShip.CargoBay.IsPrimed)
+            return true;
+        }
+
+        bool CheckLowSecAgent(object[] Params)
+        {
+            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .5)))
             {
-                EVEFrame.Log("Priming CargoBay");
-                MyShip.CargoBay.MakeActive();
-                return false;
+                Console.Log("|yLow Security system found in Route");
+                Console.Log(" |-gSkipping agent");
+                CurrentAgent = null;
+                QueueState(CheckForMissions);
+                return true;
             }
-            if (MyShip.CargoBay.Items.Count > 0)
+            Move.ToggleAutopilot(true);
+            QueueState(Traveling);
+            QueueState(GetNewMission);
+            return true;
+        }
+
+        bool CheckLowSecDungeon(object[] Params)
+        {
+            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .5)))
             {
-                MyShip.CargoBay.Items.MoveTo(Station.ItemHangar);
-                return false;
+                Console.Log("|yLow Security system found in Route");
+                Console.Log(" |-gDeclining mission");
+
+                InsertState(CheckForMissions);
+                InsertState(DeclineMission);
+                return true;
             }
 
+            InsertState(CheckMissionCompletion);
+            InsertState(Traveling);
+            InsertState(Offload);
+            InsertState(PrepWarp);
+            InsertState(MineRoid);
+            InsertState(Traveling);
             return true;
         }
 
         public bool CompleteMission(object[] Params)
         {
-            if (AgentMission.NeedUpdate)
-            {
-                AgentMission.Update();
-                return false;
-            }
             AgentDialogWindow window = AgentDialogWindow.All.FirstOrDefault(w => w.AgentID == CurrentMission.AgentID);
             if (window == null)
             {
@@ -102,18 +222,28 @@ namespace MissionMiner
             return true;
         }
 
-        public bool GetNewMission(object[] Params)
+        public bool DeclineMission(object[] Params)
         {
-            if (AgentMission.NeedUpdate)
-            {
-                AgentMission.Update();
-                return false;
-            }
-            Agent newAgent = Agent.MyAgents.First(a => a.Name == Settings.Agent);
-            AgentDialogWindow window = AgentDialogWindow.All.FirstOrDefault(w => w.AgentID == newAgent.ID);
+            AgentDialogWindow window = AgentDialogWindow.All.FirstOrDefault(w => w.AgentID == CurrentAgent.ID);
             if (window == null)
             {
-                newAgent.StartConversation();
+                CurrentAgent.StartConversation();
+                return false;
+            }
+            if (window.HasButton(Window.Button.Decline))
+            {
+                window.ClickButton(Window.Button.Decline);
+            }
+
+            return true;
+        }
+
+        public bool GetNewMission(object[] Params)
+        {
+            AgentDialogWindow window = AgentDialogWindow.All.FirstOrDefault(w => w.AgentID == CurrentAgent.ID);
+            if (window == null)
+            {
+                CurrentAgent.StartConversation();
                 return false;
             }
             if (window.HasButton(Window.Button.RequestMission))
@@ -123,7 +253,7 @@ namespace MissionMiner
             }
             if (window.HasButton(Window.Button.Accept))
             {
-                AgentMission NewMission = AgentMission.All.First(m => m.AgentID == newAgent.ID);
+                AgentMission NewMission = AgentMission.All.First(m => m.AgentID == CurrentAgent.ID);
                 EVEFrame.Log(NewMission.Name);
                 MissionData NewMissionData = MissionData.All.FirstOrDefault(m => m.Name == NewMission.Name);
                 if (NewMissionData != null)
@@ -132,18 +262,33 @@ namespace MissionMiner
                 }
                 else
                 {
+                    Console.Log("|oUnknown mission detected");
+                    if (Config.UnknownMissionHalt)
+                    {
+                        Console.Log(" |rHalted!");
+                        Clear();
+                        return true;
+                    }
+                    if (NextDecline.ContainsKey(CurrentAgent) && NextDecline[CurrentAgent] > DateTime.Now)
+                    {
+                        Console.Log(" |-gUnable to declining mission - on cooldown");
+                        QueueState(CheckForMissions);
+                        return true;
+                    }
+
+                    Console.Log(" |-gDeclining mission");
                     window.ClickButton(Window.Button.Decline);
+                    NextDecline.AddOrUpdate(CurrentAgent, DateTime.Now.AddHours(4));
                 }
                 return false;
             }
-            CurrentMission = AgentMission.All.FirstOrDefault(m => m.AgentID == newAgent.ID);
+            CurrentMission = AgentMission.All.FirstOrDefault(m => m.AgentID == CurrentAgent.ID);
             AgentMission.All.ForEach(m => EVEFrame.Log(m.Name + " " + m.AgentID));
             if (CurrentMission != null && CurrentMission.State == AgentMission.MissionState.Accepted)
             {
                 CurrentMissionData = MissionData.All.First(m => m.Name == CurrentMission.Name);
                 window.Close();
-                QueueState(RunMiningMission);
-                QueueState(GetNewMission, 5000);
+                QueueState(CheckMissionCompletion);
                 return true;
             }
             EVEFrame.Log("Huh?");
@@ -151,54 +296,6 @@ namespace MissionMiner
             return false;
         }
 
-        public bool Undock(object[] Params)
-        {
-            if (Session.InStation)
-            {
-                Command.CmdExitStation.Execute();
-                InsertState(Undock);
-                WaitFor(30, () => Session.InSpace);
-            }
-            return true;
-        }
-
-        public bool RunMiningMission(object[] Params)
-        {
-            if (!Station.ItemHangar.IsPrimed)
-            {
-                EVEFrame.Log("Priming ItemHangar");
-                Station.ItemHangar.MakeActive();
-                return false;
-            }
-            double MinedAmount = Station.ItemHangar.Items.Where(i => i.Type == CurrentMissionData.Asteroid).Sum(i => i.Quantity * i.Volume);
-            EVEFrame.Log(MinedAmount.ToString() + " of " + CurrentMissionData.Volume.ToString());
-            if (MinedAmount >= CurrentMissionData.Volume)
-            {
-                InsertState(CompleteMission, 5000);
-                return true;
-            }
-            InsertState(RunMiningMission);
-            InsertState(Offload);
-            InsertState(ReturnToAgent);
-            InsertState(PrepWarp);
-            InsertState(MineRoid);
-            InsertState(WarpToObjective);
-            InsertState(Undock);
-
-            return true;
-        }
-
-        public bool WarpToObjective(object[] Params)
-        {
-            if (AgentMission.NeedUpdate)
-            {
-                AgentMission.Update();
-                return false;
-            }
-            Move.Instance.Bookmark(CurrentMission.Bookmarks.First(b => b.LocationType == "dungeon"));
-            WaitFor(10, () => false, () => !Move.Instance.Idle || MyShip.ToEntity.Mode == EntityMode.Warping);
-            return true;
-        }
 
         Dictionary<Module, int> CycleCounts;
         Dictionary<Module, double> CycleCompletion;
@@ -237,13 +334,13 @@ namespace MissionMiner
             {
                 Roid = Entity.All.Where(ent => ent.CategoryID == Category.Asteroid).OrderBy(e => e.Distance).FirstOrDefault();
             }
-            
+
             if(Roid != null)
             {
                 DroneControl.Instance.Start();
                 if(Roid.Distance > MyShip.Modules.Where(Lasers).Min(mod => mod.MaxRange) && MyShip.ToEntity.Mode == EntityMode.Stopped)
                 {
-                    Roid.Approach();
+                    Move.Approach(Roid);
                     return false;
                 }
                 if(!Roid.LockedTarget && !Roid.LockingTarget && Roid.Distance < MyShip.MaxTargetRange)
@@ -318,22 +415,48 @@ namespace MissionMiner
         {
             if (Busy.Instance.IsBusy)
             {
+                DroneControl.Instance.Pause();
                 return false;
             }
-            DroneControl.Instance.Clear();
             return true;
         }
 
-        public bool ReturnToAgent(object[] Params)
+
+        #endregion
+
+    }
+
+
+    #region Utility classes
+
+    static class DictionaryHelper
+    {
+        public static IDictionary<TKey, TValue> AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            if (AgentMission.NeedUpdate)
+            if (dictionary.ContainsKey(key))
             {
-                AgentMission.Update();
-                return false;
+                dictionary[key] = value;
             }
-            Move.Instance.Bookmark(CurrentMission.Bookmarks.First(b => b.LocationType == "objective"));
-            WaitFor(60, () => Session.InStation, () => !Move.Instance.Idle || MyShip.ToEntity.Mode == EntityMode.Warping);
-            return true;
+            else
+            {
+                dictionary.Add(key, value);
+            }
+
+            return dictionary;
         }
     }
+
+    public static class ForEachExtension
+    {
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> method)
+        {
+            foreach (T item in items)
+            {
+                method(item);
+            }
+        }
+    }
+
+    #endregion
+
 }

@@ -7,17 +7,19 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using EveComFramework.DroneControl;
+using EveComFramework.Core;
 using TheCodeKing.ActiveButtons.Controls;
 
 namespace MissionMiner
 {
-    public partial class Form1 : Form
+    public partial class MissionMinerUI : Form
     {
-        MissionMiner miner = new MissionMiner();
+        MissionMiner miner = MissionMiner.Instance;
         MissionMinerUIData uiData = new MissionMinerUIData();
         ActiveButton Active = new ActiveButton();
+        MissionMinerSettings Config = MissionMiner.Instance.Config;
 
-        public Form1()
+        public MissionMinerUI()
         {
             InitializeComponent();
         }
@@ -28,13 +30,44 @@ namespace MissionMiner
             aMenu.Items.Add(Active);
             Active.Text = "Start";
             Active.Click += new EventHandler(Active_Click);
-            uiData.GetData(() => this.Invoke(GetUIData));
+            //uiData.GetData(() => this.Invoke(GetUIData));
+
+            LoadSettings();
+
+            LoggerHelper.Instance.Loggers.Where(a => a.Name != "State").ForEach(a => { a.RichEvent += ConsoleUpdate; });
+        }
+
+        private void LoadSettings()
+        {
+            foreach (int i in Config.Levels)
+            {
+                switch (i)
+                {
+                    case 1: checkLevel1.Checked = true; break;
+                    case 2: checkLevel2.Checked = true; break;
+                    case 3: checkLevel3.Checked = true; break;
+                    case 4: checkLevel4.Checked = true; break;
+                }
+            }
+
         }
 
         public void GetUIData()
         {
-            cbxAgents.Items.AddRange(uiData.Agents.Select(a => new { Name = a.Key, ID = a.Value }).ToArray());
-            
+            //cbxAgents.Items.AddRange(uiData.Agents.Select(a => new { Name = a.Key, ID = a.Value }).ToArray());
+        }
+
+        delegate void SetConsoleUpdate(string Module, string Message);
+        public void ConsoleUpdate(string Module, string Message)
+        {
+            if (richConsole.InvokeRequired)
+            {
+                richConsole.BeginInvoke(new SetConsoleUpdate(ConsoleUpdate), Module, Message);
+            }
+            else
+            {
+                LoggerHelper.Instance.RichTextboxUpdater(richConsole, Module, Message);
+            }
         }
 
         void Active_Click(object sender, EventArgs e)
@@ -56,10 +89,66 @@ namespace MissionMiner
             DroneControl.Instance.Configure();
         }
 
-        private void cbxAgents_SelectedIndexChanged(object sender, EventArgs e)
+        private void checkLevel1_CheckedChanged(object sender, EventArgs e)
         {
-            miner.Settings.Agent = cbxAgents.Text;
+            if (checkLevel1.Checked)
+            {
+                Config.Levels.Add(1);
+            }
+            else
+            {
+                Config.Levels.Add(1);
+            }
         }
+
+        private void checkLevel2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkLevel2.Checked)
+            {
+                Config.Levels.Add(2);
+            }
+            else
+            {
+                Config.Levels.Add(2);
+            }
+        }
+
+        private void checkLevel3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkLevel3.Checked)
+            {
+                Config.Levels.Add(3);
+            }
+            else
+            {
+                Config.Levels.Add(3);
+            }
+
+        }
+
+        private void checkLevel4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkLevel3.Checked)
+            {
+                Config.Levels.Add(4);
+            }
+            else
+            {
+                Config.Levels.Add(4);
+            }
+
+        }
+
+        private void btnAutoModuleConfig_Click(object sender, EventArgs e)
+        {
+            MissionMiner.Instance.Automodule.Configure();
+        }
+
+        private void btnOptimizer_Click(object sender, EventArgs e)
+        {
+            MissionMiner.Instance.Optimizer.Configure();
+        }
+
     }
 
     public static class WindowsFormsControlInvoke
