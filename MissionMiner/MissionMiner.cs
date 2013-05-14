@@ -210,7 +210,7 @@ namespace MissionMiner
             InsertState(Offload);
             InsertState(PrepWarp);
             InsertState(MineRoid);
-            InsertState(Traveling);
+            InsertState(Traveling, 3000);
             return true;
         }
 
@@ -329,6 +329,7 @@ namespace MissionMiner
             }
             if (MyShip.OreHold.UsedCapacity >= MyShip.OreHold.MaxCapacity * 0.95)
             {
+                Console.Log("|oOre hold is full");
                 return true;
             }
             Entity Roid;
@@ -414,6 +415,7 @@ namespace MissionMiner
                 }
                 return false;
             }
+            Console.Log("|oNo more asteroids of the correct type left to mine");
             return true;
         }
 

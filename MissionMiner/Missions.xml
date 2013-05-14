@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
 <Missions>
+  <!-- Level 1 Mission below this Line. -->
   <Mission>
     <Name>Asteroid Catastrophe</Name>
     <Damage>
@@ -41,4 +42,39 @@
     <Volume>1080</Volume>
     <VolumePerRoid>1080</VolumePerRoid>
   </Mission>
+  
+  <!-- Level 2 Mission below this Line. -->
+  <Mission>
+    <Name>Claimjumpers</Name>
+    <Asteroid>Banidine</Asteroid>
+    <Volume>18000</Volume>
+    <VolumePerRoid>1337</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Understanding Augumene</Name>
+    <Asteroid>Augumene</Asteroid>
+    <Volume>2250</Volume>
+    <VolumePerRoid>1337</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Down and Dirty</Name>
+    <Asteroid>Augumene</Asteroid>
+    <Volume>2250</Volume>
+    <VolumePerRoid>1337</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Mercium Belt</Name>
+    <Asteroid>Mercium</Asteroid>
+    <Volume>6000</Volume>
+    <VolumePerRoid>1337</VolumePerRoid>
+  </Mission>
+  <Mission>
+    <Name>Unknown Events</Name>
+    <Asteroid>Lyavite</Asteroid>
+    <Volume>5000</Volume>
+    <VolumePerRoid>1337</VolumePerRoid>
+  </Mission>
+  
+  <!-- Level 3 Mission below this Line. -->
+  <!-- Level 4 Mission below this Line. -->
 </Missions>
