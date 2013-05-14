@@ -222,6 +222,7 @@ namespace MissionMiner
             if (!MyShip.OreHold.IsPrimed)
             {
                 MyShip.OreHold.MakeActive();
+                return false;
             }
             if (MyShip.OreHold.UsedCapacity >= MyShip.OreHold.MaxCapacity * 0.95)
             {
