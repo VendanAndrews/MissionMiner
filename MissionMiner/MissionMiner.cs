@@ -146,9 +146,10 @@ namespace MissionMiner
             }
             double MinedAmount = Station.ItemHangar.Items.Where(i => i.Type == CurrentMissionData.Asteroid).Sum(i => i.Quantity * i.Volume);
             Console.Log("|oMission Status");
-            Console.Log(" |-g{0}% complete", (MinedAmount / CurrentMissionData.Volume).ToString("P0"));
+            Console.Log(" |-g{0} complete", (MinedAmount / CurrentMissionData.Volume).ToString("P0"));
             if (MinedAmount >= CurrentMissionData.Volume)
             {
+                InsertState(CheckForMissions);
                 InsertState(CompleteMission, 5000);
                 return true;
             }
@@ -160,8 +161,7 @@ namespace MissionMiner
 
         bool Offload(object[] Params)
         {
-            Cargo.At(CurrentMission.Bookmarks.First(b => b.LocationType == "objective")).Unload();
-            Cargo.At(CurrentMission.Bookmarks.First(b => b.LocationType == "objective"), () => MyShip.OreHold).Unload();
+            Cargo.At(CurrentMission.Bookmarks.First(b => b.LocationType == "objective")).Unload(Target: () => MyShip.OreHold);
             return true;
         }
 
@@ -223,6 +223,8 @@ namespace MissionMiner
                 curAgent.StartConversation();
                 return false;
             }
+            Console.Log("|oCompleting mission");
+            Console.Log(" |-g{0}", CurrentMission.Name);
             window.ClickButton(Window.Button.CompleteMission);
             CurrentMission = null;
             return true;
