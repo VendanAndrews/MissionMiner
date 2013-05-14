@@ -94,8 +94,9 @@ namespace MissionMiner
             }
             else
             {
-                Config.Levels.Add(1);
+                Config.Levels.Remove(1);
             }
+            Config.Save();
         }
 
         private void checkLevel2_CheckedChanged(object sender, EventArgs e)
@@ -106,8 +107,9 @@ namespace MissionMiner
             }
             else
             {
-                Config.Levels.Add(2);
+                Config.Levels.Remove(2);
             }
+            Config.Save();
         }
 
         private void checkLevel3_CheckedChanged(object sender, EventArgs e)
@@ -118,9 +120,9 @@ namespace MissionMiner
             }
             else
             {
-                Config.Levels.Add(3);
+                Config.Levels.Remove(3);
             }
-
+            Config.Save();
         }
 
         private void checkLevel4_CheckedChanged(object sender, EventArgs e)
@@ -131,9 +133,9 @@ namespace MissionMiner
             }
             else
             {
-                Config.Levels.Add(4);
+                Config.Levels.Remove(4);
             }
-
+            Config.Save();
         }
 
         private void btnAutoModuleConfig_Click(object sender, EventArgs e)
