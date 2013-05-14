@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnDrones = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -40,6 +41,8 @@
             this.checkLevel3 = new System.Windows.Forms.CheckBox();
             this.checkLevel2 = new System.Windows.Forms.CheckBox();
             this.checkLevel1 = new System.Windows.Forms.CheckBox();
+            this.lblState = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -50,7 +53,7 @@
             // 
             this.btnDrones.Location = new System.Drawing.Point(6, 283);
             this.btnDrones.Name = "btnDrones";
-            this.btnDrones.Size = new System.Drawing.Size(290, 23);
+            this.btnDrones.Size = new System.Drawing.Size(390, 23);
             this.btnDrones.TabIndex = 0;
             this.btnDrones.Text = "Config Drones";
             this.btnDrones.UseVisualStyleBackColor = true;
@@ -63,16 +66,17 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(310, 338);
+            this.tabControl1.Size = new System.Drawing.Size(410, 338);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.lblState);
             this.tabPage1.Controls.Add(this.richConsole);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(302, 312);
+            this.tabPage1.Size = new System.Drawing.Size(402, 312);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Console";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -81,9 +85,9 @@
             // 
             this.richConsole.BackColor = System.Drawing.Color.Black;
             this.richConsole.ForeColor = System.Drawing.Color.White;
-            this.richConsole.Location = new System.Drawing.Point(6, 6);
+            this.richConsole.Location = new System.Drawing.Point(6, 26);
             this.richConsole.Name = "richConsole";
-            this.richConsole.Size = new System.Drawing.Size(290, 300);
+            this.richConsole.Size = new System.Drawing.Size(390, 280);
             this.richConsole.TabIndex = 0;
             this.richConsole.Text = "";
             // 
@@ -96,7 +100,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(302, 312);
+            this.tabPage2.Size = new System.Drawing.Size(402, 312);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -105,7 +109,7 @@
             // 
             this.btnOptimizer.Location = new System.Drawing.Point(6, 225);
             this.btnOptimizer.Name = "btnOptimizer";
-            this.btnOptimizer.Size = new System.Drawing.Size(290, 23);
+            this.btnOptimizer.Size = new System.Drawing.Size(390, 23);
             this.btnOptimizer.TabIndex = 3;
             this.btnOptimizer.Text = "Config Optimizer";
             this.btnOptimizer.UseVisualStyleBackColor = true;
@@ -115,7 +119,7 @@
             // 
             this.btnAutoModuleConfig.Location = new System.Drawing.Point(6, 254);
             this.btnAutoModuleConfig.Name = "btnAutoModuleConfig";
-            this.btnAutoModuleConfig.Size = new System.Drawing.Size(290, 23);
+            this.btnAutoModuleConfig.Size = new System.Drawing.Size(390, 23);
             this.btnAutoModuleConfig.TabIndex = 2;
             this.btnAutoModuleConfig.Text = "Config AutoModule";
             this.btnAutoModuleConfig.UseVisualStyleBackColor = true;
@@ -129,7 +133,7 @@
             this.groupBox1.Controls.Add(this.checkLevel1);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(290, 56);
+            this.groupBox1.Size = new System.Drawing.Size(390, 56);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Mission Levels";
@@ -138,9 +142,9 @@
             // 
             this.checkLevel4.AutoSize = true;
             this.checkLevel4.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.checkLevel4.Location = new System.Drawing.Point(240, 20);
+            this.checkLevel4.Location = new System.Drawing.Point(339, 20);
             this.checkLevel4.Name = "checkLevel4";
-            this.checkLevel4.Size = new System.Drawing.Size(46, 31);
+            this.checkLevel4.Size = new System.Drawing.Size(44, 31);
             this.checkLevel4.TabIndex = 3;
             this.checkLevel4.Text = "Level 4";
             this.checkLevel4.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -151,9 +155,9 @@
             // 
             this.checkLevel3.AutoSize = true;
             this.checkLevel3.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.checkLevel3.Location = new System.Drawing.Point(162, 20);
+            this.checkLevel3.Location = new System.Drawing.Point(228, 20);
             this.checkLevel3.Name = "checkLevel3";
-            this.checkLevel3.Size = new System.Drawing.Size(46, 31);
+            this.checkLevel3.Size = new System.Drawing.Size(44, 31);
             this.checkLevel3.TabIndex = 2;
             this.checkLevel3.Text = "Level 3";
             this.checkLevel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -164,9 +168,9 @@
             // 
             this.checkLevel2.AutoSize = true;
             this.checkLevel2.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.checkLevel2.Location = new System.Drawing.Point(84, 20);
+            this.checkLevel2.Location = new System.Drawing.Point(117, 20);
             this.checkLevel2.Name = "checkLevel2";
-            this.checkLevel2.Size = new System.Drawing.Size(46, 31);
+            this.checkLevel2.Size = new System.Drawing.Size(44, 31);
             this.checkLevel2.TabIndex = 1;
             this.checkLevel2.Text = "Level 2";
             this.checkLevel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -179,18 +183,32 @@
             this.checkLevel1.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
             this.checkLevel1.Location = new System.Drawing.Point(6, 20);
             this.checkLevel1.Name = "checkLevel1";
-            this.checkLevel1.Size = new System.Drawing.Size(46, 31);
+            this.checkLevel1.Size = new System.Drawing.Size(44, 31);
             this.checkLevel1.TabIndex = 0;
             this.checkLevel1.Text = "Level 1";
             this.checkLevel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.checkLevel1.UseVisualStyleBackColor = true;
             this.checkLevel1.CheckedChanged += new System.EventHandler(this.checkLevel1_CheckedChanged);
             // 
+            // lblState
+            // 
+            this.lblState.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblState.Location = new System.Drawing.Point(6, 3);
+            this.lblState.Name = "lblState";
+            this.lblState.Size = new System.Drawing.Size(390, 20);
+            this.lblState.TabIndex = 1;
+            this.lblState.Text = "State";
+            this.lblState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MissionMinerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 362);
+            this.ClientSize = new System.Drawing.Size(434, 362);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "MissionMinerUI";
@@ -219,6 +237,8 @@
         private System.Windows.Forms.CheckBox checkLevel1;
         private System.Windows.Forms.Button btnAutoModuleConfig;
         private System.Windows.Forms.Button btnOptimizer;
+        private System.Windows.Forms.Label lblState;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

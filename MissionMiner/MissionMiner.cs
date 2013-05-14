@@ -80,7 +80,7 @@ namespace MissionMiner
         AgentMission CurrentMission;
         MissionData CurrentMissionData;
         Agent CurrentAgent;
-        List<Agent> AgentQueue;
+        List<Agent> AgentQueue = new List<Agent>();
         Dictionary<Agent, DateTime> NextDecline = new Dictionary<Agent, DateTime>();
 
         #endregion
@@ -89,8 +89,7 @@ namespace MissionMiner
 
         public void Start()
         {
-            QueueState(Offload);
-            QueueState(GetNewMission, 5000);
+            QueueState(CheckForMissions);
         }
 
         #endregion
@@ -120,7 +119,11 @@ namespace MissionMiner
                     CurrentAgent = AgentQueue.FirstOrDefault();
                     AgentQueue.Remove(CurrentAgent);
                 }
-                if (Session.InSpace || Session.StationID == CurrentAgent.StationID)
+
+                Console.Log("|oNew agent selected");
+                Console.Log(" |-g{0}", CurrentAgent.Name);
+
+                if (Session.InSpace || Session.StationID != CurrentAgent.StationID)
                 {
                     CurrentAgent.SetDestination();
                 }
@@ -181,6 +184,7 @@ namespace MissionMiner
                 QueueState(CheckForMissions);
                 return true;
             }
+            Console.Log("|oRoute is clear of Low Security systems");
             Move.ToggleAutopilot(true);
             QueueState(Traveling);
             QueueState(GetNewMission);
@@ -199,6 +203,8 @@ namespace MissionMiner
                 return true;
             }
 
+            Console.Log("|oRoute is clear of Low Security systems");
+            Move.ToggleAutopilot(true);
             InsertState(CheckMissionCompletion);
             InsertState(Traveling);
             InsertState(Offload);

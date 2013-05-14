@@ -22,6 +22,7 @@ namespace MissionMiner
         public MissionMinerUI()
         {
             InitializeComponent();
+            timer1.Start();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -39,16 +40,10 @@ namespace MissionMiner
 
         private void LoadSettings()
         {
-            foreach (int i in Config.Levels)
-            {
-                switch (i)
-                {
-                    case 1: checkLevel1.Checked = true; break;
-                    case 2: checkLevel2.Checked = true; break;
-                    case 3: checkLevel3.Checked = true; break;
-                    case 4: checkLevel4.Checked = true; break;
-                }
-            }
+            if (Config.Levels.Contains(1)) checkLevel1.Checked = true;
+            if (Config.Levels.Contains(2)) checkLevel2.Checked = true;
+            if (Config.Levels.Contains(3)) checkLevel3.Checked = true;
+            if (Config.Levels.Contains(4)) checkLevel4.Checked = true;
 
         }
 
@@ -147,6 +142,18 @@ namespace MissionMiner
         private void btnOptimizer_Click(object sender, EventArgs e)
         {
             MissionMiner.Instance.Optimizer.Configure();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (MissionMiner.Instance.CurState != null)
+            {
+                lblState.Text = MissionMiner.Instance.CurState.ToString();
+            }
+            else
+            {
+                lblState.Text = "Idle";
+            }
         }
 
     }
