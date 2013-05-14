@@ -44,6 +44,7 @@
             this.lblState = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.checkUnknownMissionHalt = new System.Windows.Forms.CheckBox();
+            this.checkAlwaysOnTop = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -94,6 +95,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkAlwaysOnTop);
             this.tabPage2.Controls.Add(this.checkUnknownMissionHalt);
             this.tabPage2.Controls.Add(this.btnOptimizer);
             this.tabPage2.Controls.Add(this.btnAutoModuleConfig);
@@ -217,6 +219,17 @@
             this.checkUnknownMissionHalt.UseVisualStyleBackColor = true;
             this.checkUnknownMissionHalt.CheckedChanged += new System.EventHandler(this.checkUnknownMissionHalt_CheckedChanged);
             // 
+            // checkAlwaysOnTop
+            // 
+            this.checkAlwaysOnTop.AutoSize = true;
+            this.checkAlwaysOnTop.Location = new System.Drawing.Point(203, 68);
+            this.checkAlwaysOnTop.Name = "checkAlwaysOnTop";
+            this.checkAlwaysOnTop.Size = new System.Drawing.Size(90, 17);
+            this.checkAlwaysOnTop.TabIndex = 5;
+            this.checkAlwaysOnTop.Text = "Always on top";
+            this.checkAlwaysOnTop.UseVisualStyleBackColor = true;
+            this.checkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.checkAlwaysOnTop_CheckedChanged);
+            // 
             // MissionMinerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -254,6 +267,7 @@
         private System.Windows.Forms.Label lblState;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.CheckBox checkUnknownMissionHalt;
+        private System.Windows.Forms.CheckBox checkAlwaysOnTop;
     }
 }
 

@@ -39,6 +39,7 @@ namespace MissionMiner
     class MissionMinerSettings : Settings
     {
         public bool UnknownMissionHalt = false;
+        public bool AlwaysOnTop = false;
         public List<int> Levels = new List<int> { 1 };
     }
 
@@ -187,7 +188,7 @@ namespace MissionMiner
             Console.Log("|oRoute is clear of Low Security systems");
             Move.ToggleAutopilot(true);
             QueueState(Traveling);
-            QueueState(GetNewMission);
+            QueueState(GetNewMission, 2000);
             return true;
         }
 
@@ -266,6 +267,8 @@ namespace MissionMiner
                 MissionData NewMissionData = MissionData.All.FirstOrDefault(m => m.Name == NewMission.Name);
                 if (NewMissionData != null)
                 {
+                    Console.Log("|oAccepting mission");
+                    Console.Log(" |-g{0}", NewMission.Name);
                     window.ClickButton(Window.Button.Accept);
                 }
                 else
