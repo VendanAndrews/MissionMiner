@@ -40,10 +40,10 @@ namespace MissionMiner
 
         private void LoadSettings()
         {
-            if (Config.Levels.Contains(1)) checkLevel1.Checked = true;
-            if (Config.Levels.Contains(2)) checkLevel2.Checked = true;
-            if (Config.Levels.Contains(3)) checkLevel3.Checked = true;
-            if (Config.Levels.Contains(4)) checkLevel4.Checked = true;
+            checkLevel1.Checked = Config.Level1;
+            checkLevel2.Checked = Config.Level2;
+            checkLevel3.Checked = Config.Level3;
+            checkLevel4.Checked = Config.Level4;
             checkUnknownMissionHalt.Checked = Config.UnknownMissionHalt;
             checkAlwaysOnTop.Checked = Config.AlwaysOnTop;
             this.TopMost = Config.AlwaysOnTop;
@@ -88,53 +88,25 @@ namespace MissionMiner
 
         private void checkLevel1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLevel1.Checked)
-            {
-                Config.Levels.Add(1);
-            }
-            else
-            {
-                Config.Levels.Remove(1);
-            }
+            Config.Level1 = checkLevel1.Checked;
             Config.Save();
         }
 
         private void checkLevel2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLevel2.Checked)
-            {
-                Config.Levels.Add(2);
-            }
-            else
-            {
-                Config.Levels.Remove(2);
-            }
+            Config.Level2 = checkLevel2.Checked;
             Config.Save();
         }
 
         private void checkLevel3_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLevel3.Checked)
-            {
-                Config.Levels.Add(3);
-            }
-            else
-            {
-                Config.Levels.Remove(3);
-            }
+            Config.Level3 = checkLevel3.Checked;
             Config.Save();
         }
 
         private void checkLevel4_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLevel3.Checked)
-            {
-                Config.Levels.Add(4);
-            }
-            else
-            {
-                Config.Levels.Remove(4);
-            }
+            Config.Level4 = checkLevel4.Checked;
             Config.Save();
         }
 

@@ -40,7 +40,10 @@ namespace MissionMiner
     {
         public bool UnknownMissionHalt = false;
         public bool AlwaysOnTop = false;
-        public List<int> Levels = new List<int> { 1 };
+        public bool Level1 = true;
+        public bool Level2 = false;
+        public bool Level3 = false;
+        public bool Level4 = false;
     }
 
     #endregion
@@ -115,7 +118,10 @@ namespace MissionMiner
                 {
                     if (!AgentQueue.Any())
                     {
-                        AgentQueue = Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && Config.Levels.Contains(a.Level)).ToList();
+                        if (Config.Level1) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 1));
+                        if (Config.Level2) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 2));
+                        if (Config.Level3) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 3));
+                        if (Config.Level4) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 4));
                     }
                     CurrentAgent = AgentQueue.FirstOrDefault();
                     AgentQueue.Remove(CurrentAgent);
