@@ -16,7 +16,7 @@ namespace MissionMiner
     {
         MissionMiner miner = MissionMiner.Instance;
         MissionMinerUIData uiData = new MissionMinerUIData();
-        ActiveButton Active = new ActiveButton();
+        ActiveButton Shrink = new ActiveButton();
         MissionMinerSettings Config = MissionMiner.Instance.Config;
 
         public MissionMinerUI()
@@ -28,9 +28,9 @@ namespace MissionMiner
         private void Form1_Load(object sender, EventArgs e)
         {
             IActiveMenu aMenu = ActiveMenu.GetInstance(this);
-            aMenu.Items.Add(Active);
-            Active.Text = "Start";
-            Active.Click += new EventHandler(Active_Click);
+            aMenu.Items.Add(Shrink);
+            Shrink.Text = "Shrink";
+            Shrink.Click += new EventHandler(Shrink_Click);
             //uiData.GetData(() => this.Invoke(GetUIData));
 
             LoadSettings();
@@ -47,6 +47,20 @@ namespace MissionMiner
             checkUnknownMissionHalt.Checked = Config.UnknownMissionHalt;
             checkAlwaysOnTop.Checked = Config.AlwaysOnTop;
             this.TopMost = Config.AlwaysOnTop;
+        }
+
+        void Shrink_Click(object sender, EventArgs e)
+        {
+            if (this.Height == 420)
+            {
+                this.Height = 70;
+                Shrink.Text = "Restore";
+            }
+            else
+            {
+                this.Height = 420;
+                Shrink.Text = "Shrink";
+            }
         }
 
         public void GetUIData()
@@ -67,19 +81,6 @@ namespace MissionMiner
             }
         }
 
-        void Active_Click(object sender, EventArgs e)
-        {
-            if (miner.Idle)
-            {
-                miner.Start();
-                Active.Text = "Stop";
-            }
-            else
-            {
-                miner.Clear();
-                Active.Text = "Start";
-            }
-        }
 
         private void btnDrones_Click(object sender, EventArgs e)
         {
@@ -130,6 +131,8 @@ namespace MissionMiner
             {
                 lblState.Text = "Idle";
             }
+            checkStopOnComplete.Checked = MissionMiner.Instance.StopOnComplete;
+            if (MissionMiner.Instance.Idle && checkActive.Checked) checkActive.Checked = false;
         }
 
         private void checkUnknownMissionHalt_CheckedChanged(object sender, EventArgs e)
@@ -143,6 +146,23 @@ namespace MissionMiner
             Config.AlwaysOnTop = checkAlwaysOnTop.Checked;
             this.TopMost = Config.AlwaysOnTop;
             Config.Save();
+        }
+
+        private void checkStopOnComplete_CheckedChanged(object sender, EventArgs e)
+        {
+            MissionMiner.Instance.StopOnComplete = checkStopOnComplete.Checked;
+        }
+
+        private void checkActive_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkActive.Checked)
+            {
+                miner.Start();
+            }
+            else
+            {
+                miner.Stop();
+            }
         }
 
     }

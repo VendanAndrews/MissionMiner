@@ -32,8 +32,11 @@
             this.btnDrones = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.lblState = new System.Windows.Forms.Label();
             this.richConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkAlwaysOnTop = new System.Windows.Forms.CheckBox();
+            this.checkUnknownMissionHalt = new System.Windows.Forms.CheckBox();
             this.btnOptimizer = new System.Windows.Forms.Button();
             this.btnAutoModuleConfig = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -41,10 +44,9 @@
             this.checkLevel3 = new System.Windows.Forms.CheckBox();
             this.checkLevel2 = new System.Windows.Forms.CheckBox();
             this.checkLevel1 = new System.Windows.Forms.CheckBox();
-            this.lblState = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkUnknownMissionHalt = new System.Windows.Forms.CheckBox();
-            this.checkAlwaysOnTop = new System.Windows.Forms.CheckBox();
+            this.checkActive = new System.Windows.Forms.CheckBox();
+            this.checkStopOnComplete = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -65,7 +67,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Location = new System.Drawing.Point(12, 32);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(410, 338);
@@ -82,6 +84,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Console";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lblState
+            // 
+            this.lblState.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblState.Location = new System.Drawing.Point(6, 3);
+            this.lblState.Name = "lblState";
+            this.lblState.Size = new System.Drawing.Size(390, 20);
+            this.lblState.TabIndex = 1;
+            this.lblState.Text = "State";
+            this.lblState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // richConsole
             // 
@@ -108,6 +120,28 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkAlwaysOnTop
+            // 
+            this.checkAlwaysOnTop.AutoSize = true;
+            this.checkAlwaysOnTop.Location = new System.Drawing.Point(203, 68);
+            this.checkAlwaysOnTop.Name = "checkAlwaysOnTop";
+            this.checkAlwaysOnTop.Size = new System.Drawing.Size(92, 17);
+            this.checkAlwaysOnTop.TabIndex = 5;
+            this.checkAlwaysOnTop.Text = "Always on top";
+            this.checkAlwaysOnTop.UseVisualStyleBackColor = true;
+            this.checkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.checkAlwaysOnTop_CheckedChanged);
+            // 
+            // checkUnknownMissionHalt
+            // 
+            this.checkUnknownMissionHalt.AutoSize = true;
+            this.checkUnknownMissionHalt.Location = new System.Drawing.Point(12, 68);
+            this.checkUnknownMissionHalt.Name = "checkUnknownMissionHalt";
+            this.checkUnknownMissionHalt.Size = new System.Drawing.Size(162, 17);
+            this.checkUnknownMissionHalt.TabIndex = 4;
+            this.checkUnknownMissionHalt.Text = "Halt bot on unknown mission";
+            this.checkUnknownMissionHalt.UseVisualStyleBackColor = true;
+            this.checkUnknownMissionHalt.CheckedChanged += new System.EventHandler(this.checkUnknownMissionHalt_CheckedChanged);
             // 
             // btnOptimizer
             // 
@@ -148,7 +182,7 @@
             this.checkLevel4.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
             this.checkLevel4.Location = new System.Drawing.Point(339, 20);
             this.checkLevel4.Name = "checkLevel4";
-            this.checkLevel4.Size = new System.Drawing.Size(44, 31);
+            this.checkLevel4.Size = new System.Drawing.Size(46, 31);
             this.checkLevel4.TabIndex = 3;
             this.checkLevel4.Text = "Level 4";
             this.checkLevel4.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -161,7 +195,7 @@
             this.checkLevel3.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
             this.checkLevel3.Location = new System.Drawing.Point(228, 20);
             this.checkLevel3.Name = "checkLevel3";
-            this.checkLevel3.Size = new System.Drawing.Size(44, 31);
+            this.checkLevel3.Size = new System.Drawing.Size(46, 31);
             this.checkLevel3.TabIndex = 2;
             this.checkLevel3.Text = "Level 3";
             this.checkLevel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -174,7 +208,7 @@
             this.checkLevel2.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
             this.checkLevel2.Location = new System.Drawing.Point(117, 20);
             this.checkLevel2.Name = "checkLevel2";
-            this.checkLevel2.Size = new System.Drawing.Size(44, 31);
+            this.checkLevel2.Size = new System.Drawing.Size(46, 31);
             this.checkLevel2.TabIndex = 1;
             this.checkLevel2.Text = "Level 2";
             this.checkLevel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -187,54 +221,46 @@
             this.checkLevel1.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
             this.checkLevel1.Location = new System.Drawing.Point(6, 20);
             this.checkLevel1.Name = "checkLevel1";
-            this.checkLevel1.Size = new System.Drawing.Size(44, 31);
+            this.checkLevel1.Size = new System.Drawing.Size(46, 31);
             this.checkLevel1.TabIndex = 0;
             this.checkLevel1.Text = "Level 1";
             this.checkLevel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.checkLevel1.UseVisualStyleBackColor = true;
             this.checkLevel1.CheckedChanged += new System.EventHandler(this.checkLevel1_CheckedChanged);
             // 
-            // lblState
-            // 
-            this.lblState.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblState.Location = new System.Drawing.Point(6, 3);
-            this.lblState.Name = "lblState";
-            this.lblState.Size = new System.Drawing.Size(390, 20);
-            this.lblState.TabIndex = 1;
-            this.lblState.Text = "State";
-            this.lblState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // checkUnknownMissionHalt
+            // checkActive
             // 
-            this.checkUnknownMissionHalt.AutoSize = true;
-            this.checkUnknownMissionHalt.Location = new System.Drawing.Point(12, 68);
-            this.checkUnknownMissionHalt.Name = "checkUnknownMissionHalt";
-            this.checkUnknownMissionHalt.Size = new System.Drawing.Size(159, 17);
-            this.checkUnknownMissionHalt.TabIndex = 4;
-            this.checkUnknownMissionHalt.Text = "Halt bot on unknown mission";
-            this.checkUnknownMissionHalt.UseVisualStyleBackColor = true;
-            this.checkUnknownMissionHalt.CheckedChanged += new System.EventHandler(this.checkUnknownMissionHalt_CheckedChanged);
+            this.checkActive.AutoSize = true;
+            this.checkActive.Location = new System.Drawing.Point(13, 9);
+            this.checkActive.Name = "checkActive";
+            this.checkActive.Size = new System.Drawing.Size(55, 17);
+            this.checkActive.TabIndex = 3;
+            this.checkActive.Text = "Active";
+            this.checkActive.UseVisualStyleBackColor = true;
+            this.checkActive.CheckedChanged += new System.EventHandler(this.checkActive_CheckedChanged);
             // 
-            // checkAlwaysOnTop
+            // checkStopOnComplete
             // 
-            this.checkAlwaysOnTop.AutoSize = true;
-            this.checkAlwaysOnTop.Location = new System.Drawing.Point(203, 68);
-            this.checkAlwaysOnTop.Name = "checkAlwaysOnTop";
-            this.checkAlwaysOnTop.Size = new System.Drawing.Size(90, 17);
-            this.checkAlwaysOnTop.TabIndex = 5;
-            this.checkAlwaysOnTop.Text = "Always on top";
-            this.checkAlwaysOnTop.UseVisualStyleBackColor = true;
-            this.checkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.checkAlwaysOnTop_CheckedChanged);
+            this.checkStopOnComplete.AutoSize = true;
+            this.checkStopOnComplete.Location = new System.Drawing.Point(74, 9);
+            this.checkStopOnComplete.Name = "checkStopOnComplete";
+            this.checkStopOnComplete.Size = new System.Drawing.Size(162, 17);
+            this.checkStopOnComplete.TabIndex = 4;
+            this.checkStopOnComplete.Text = "Stop after completing mission";
+            this.checkStopOnComplete.UseVisualStyleBackColor = true;
+            this.checkStopOnComplete.CheckedChanged += new System.EventHandler(this.checkStopOnComplete_CheckedChanged);
             // 
             // MissionMinerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 362);
+            this.ClientSize = new System.Drawing.Size(434, 382);
+            this.Controls.Add(this.checkStopOnComplete);
+            this.Controls.Add(this.checkActive);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "MissionMinerUI";
@@ -247,6 +273,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -268,6 +295,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.CheckBox checkUnknownMissionHalt;
         private System.Windows.Forms.CheckBox checkAlwaysOnTop;
+        private System.Windows.Forms.CheckBox checkActive;
+        private System.Windows.Forms.CheckBox checkStopOnComplete;
     }
 }
 

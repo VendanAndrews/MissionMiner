@@ -86,6 +86,7 @@ namespace MissionMiner
         Agent CurrentAgent;
         List<Agent> AgentQueue = new List<Agent>();
         Dictionary<Agent, DateTime> NextDecline = new Dictionary<Agent, DateTime>();
+        public bool StopOnComplete = false;
 
         #endregion
 
@@ -93,7 +94,17 @@ namespace MissionMiner
 
         public void Start()
         {
-            QueueState(CheckForMissions);
+            if (Idle)
+            {
+                QueueState(CheckForMissions);
+            }
+        }
+
+        public void Stop()
+        {
+            Clear();
+            Cargo.Clear();
+            Move.Clear();
         }
 
         #endregion
@@ -102,6 +113,13 @@ namespace MissionMiner
 
         public bool CheckForMissions(object[] Params)
         {
+            if (Session.InStation && StopOnComplete)
+            {
+                Cargo.Clear();
+                Move.Clear();
+                StopOnComplete = false;
+                return true;
+            }
             if (AgentMission.All.Any(a => a.Type == AgentMission.MissionType.Mining && a.State == AgentMission.MissionState.Accepted))
             {
                 CurrentMission = AgentMission.All.FirstOrDefault(a => a.Type == AgentMission.MissionType.Mining && a.State == AgentMission.MissionState.Accepted);
@@ -183,7 +201,7 @@ namespace MissionMiner
 
         bool CheckLowSecAgent(object[] Params)
         {
-            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .5)))
+            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .45)))
             {
                 Console.Log("|yLow Security system found in Route");
                 Console.Log(" |-gSkipping agent");
@@ -200,7 +218,7 @@ namespace MissionMiner
 
         bool CheckLowSecDungeon(object[] Params)
         {
-            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .5)))
+            if (Route.Path.Any(a => SolarSystem.All.Any(b => b.ID == a && b.Security < .45)))
             {
                 Console.Log("|yLow Security system found in Route");
                 Console.Log(" |-gDeclining mission");
