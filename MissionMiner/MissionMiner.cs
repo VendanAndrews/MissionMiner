@@ -137,10 +137,10 @@ namespace MissionMiner
                 {
                     if (!AgentQueue.Any())
                     {
-                        if (Config.Level1) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 1));
-                        if (Config.Level2) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 2));
-                        if (Config.Level3) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 3));
-                        if (Config.Level4) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 4));
+                        if (Config.Level1) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 1 && (!NextDecline.ContainsKey(a) || NextDecline[a] < DateTime.Now)));
+                        if (Config.Level2) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 2 && (!NextDecline.ContainsKey(a) || NextDecline[a] < DateTime.Now)));
+                        if (Config.Level3) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 3 && (!NextDecline.ContainsKey(a) || NextDecline[a] < DateTime.Now)));
+                        if (Config.Level4) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 4 && (!NextDecline.ContainsKey(a) || NextDecline[a] < DateTime.Now)));
                     }
                     CurrentAgent = AgentQueue.FirstOrDefault();
                     AgentQueue.Remove(CurrentAgent);
@@ -297,6 +297,7 @@ namespace MissionMiner
                         {
                             Console.Log(" |-gUnable to declining mission - on cooldown");
                             CurrentAgent = null;
+                            window.Close();
                             QueueState(CheckForMissions);
                             return true;
                         }
@@ -325,6 +326,7 @@ namespace MissionMiner
                     {
                         Console.Log(" |-gUnable to declining mission - on cooldown");
                         CurrentAgent = null;
+                        window.Close();
                         QueueState(CheckForMissions);
                         return true;
                     }
