@@ -45,7 +45,12 @@ namespace MissionMiner
         public bool Level3 = false;
         public bool Level4 = false;
         public bool Obstacles = false;
-        public SerializableDictionary<int, DateTime> NextDecline = new SerializableDictionary<int, DateTime>();
+    }
+
+    class MissionMinerGlobalSettings : Settings
+    {
+        public MissionMinerGlobalSettings(string profilename) : base(profilename){}
+        public SerializableDictionary<long, SerializableDictionary<int, DateTime>> NextDecline = new SerializableDictionary<long,SerializableDictionary<int,DateTime>>();
     }
 
     #endregion
@@ -76,6 +81,7 @@ namespace MissionMiner
         #region Variables
 
         public MissionMinerSettings Config = new MissionMinerSettings();
+        public MissionMinerGlobalSettings GlobalConfig = new MissionMinerGlobalSettings("MissionMinerGlobalSettings");
         Logger Console = new Logger("Miner");
 
         Cargo Cargo = Cargo.Instance;
@@ -137,10 +143,10 @@ namespace MissionMiner
                 {
                     if (!AgentQueue.Any())
                     {
-                        if (Config.Level1) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 1 && (!Config.NextDecline.ContainsKey(a.ID) || Config.NextDecline[a.ID] < DateTime.Now)));
-                        if (Config.Level2) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 2 && (!Config.NextDecline.ContainsKey(a.ID) || Config.NextDecline[a.ID] < DateTime.Now)));
-                        if (Config.Level3) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 3 && (!Config.NextDecline.ContainsKey(a.ID) || Config.NextDecline[a.ID] < DateTime.Now)));
-                        if (Config.Level4) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 4 && (!Config.NextDecline.ContainsKey(a.ID) || Config.NextDecline[a.ID] < DateTime.Now)));
+                        if (Config.Level1) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 1 && (!GlobalConfig.NextDecline[Me.CharID].ContainsKey(a.ID) || GlobalConfig.NextDecline[Me.CharID][a.ID] < DateTime.Now)));
+                        if (Config.Level2) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 2 && (!GlobalConfig.NextDecline[Me.CharID].ContainsKey(a.ID) || GlobalConfig.NextDecline[Me.CharID][a.ID] < DateTime.Now)));
+                        if (Config.Level3) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 3 && (!GlobalConfig.NextDecline[Me.CharID].ContainsKey(a.ID) || GlobalConfig.NextDecline[Me.CharID][a.ID] < DateTime.Now)));
+                        if (Config.Level4) AgentQueue.AddRange(Agent.MyAgents.Where(a => a.AgentType == Agent.AgentTypes.BasicAgent && a.AgentDivision == Agent.AgentDivisions.Mining && a.Level == 4 && (!GlobalConfig.NextDecline[Me.CharID].ContainsKey(a.ID) || GlobalConfig.NextDecline[Me.CharID][a.ID] < DateTime.Now)));
                     }
                     CurrentAgent = AgentQueue.FirstOrDefault();
                     AgentQueue.Remove(CurrentAgent);
@@ -293,7 +299,7 @@ namespace MissionMiner
                 {
                     if (!Config.Obstacles && NewMissionData.Obstacles)
                     {
-                        if (Config.NextDecline.ContainsKey(CurrentAgent.ID) && Config.NextDecline[CurrentAgent.ID] > DateTime.Now)
+                        if (GlobalConfig.NextDecline[Me.CharID].ContainsKey(CurrentAgent.ID) && GlobalConfig.NextDecline[Me.CharID][CurrentAgent.ID] > DateTime.Now)
                         {
                             Console.Log(" |-gUnable to declining mission - on cooldown");
                             CurrentAgent = null;
@@ -304,7 +310,7 @@ namespace MissionMiner
 
                         Console.Log(" |-gDeclining mission");
                         window.ClickButton(Window.Button.Decline);
-                        Config.NextDecline.AddOrUpdate(CurrentAgent.ID, DateTime.Now.AddHours(4));
+                        GlobalConfig.NextDecline[Me.CharID].AddOrUpdate(CurrentAgent.ID, DateTime.Now.AddHours(4));
                     }
                     else
                     {
@@ -322,7 +328,7 @@ namespace MissionMiner
                         Clear();
                         return true;
                     }
-                    if (Config.NextDecline.ContainsKey(CurrentAgent.ID) && Config.NextDecline[CurrentAgent.ID] > DateTime.Now)
+                    if (GlobalConfig.NextDecline.ContainsKey(CurrentAgent.ID) && GlobalConfig.NextDecline[Me.CharID][CurrentAgent.ID] > DateTime.Now)
                     {
                         Console.Log(" |-gUnable to declining mission - on cooldown");
                         CurrentAgent = null;
@@ -333,7 +339,7 @@ namespace MissionMiner
 
                     Console.Log(" |-gDeclining mission");
                     window.ClickButton(Window.Button.Decline);
-                    Config.NextDecline.AddOrUpdate(CurrentAgent.ID, DateTime.Now.AddHours(4));
+                    GlobalConfig.NextDecline[Me.CharID].AddOrUpdate(CurrentAgent.ID, DateTime.Now.AddHours(4));
                 }
                 return false;
             }
