@@ -13,13 +13,15 @@ namespace MissionMiner
         public string Asteroid;
         public int Volume;
         public int VolumePerRoid;
+        public bool Obstacles;
 
-        private MissionData(string Name, string Asteroid, int Volume, int VolumePerRoid)
+        private MissionData(string Name, string Asteroid, int Volume, int VolumePerRoid, bool Obstacles)
         {
             this.Name = Name;
             this.Asteroid = Asteroid;
             this.Volume = Volume;
             this.VolumePerRoid = Volume;
+            this.Obstacles = Obstacles;
         }
 
         static List<MissionData> _All;
@@ -34,7 +36,8 @@ namespace MissionMiner
                             new MissionData(e.Element("Name").Value, 
                                 e.Elements("Asteroid").Count() > 0 ? e.Element("Asteroid").Value : "", 
                                 int.Parse(e.Element("Volume").Value),
-                                e.Elements("VolumePerRoid").Count() > 0 ? int.Parse(e.Element("VolumePerRoid").Value) : 0)).ToList();
+                                e.Elements("VolumePerRoid").Count() > 0 ? int.Parse(e.Element("VolumePerRoid").Value) : 0,
+                                e.Elements("HasObstacles").Count() > 0 ? bool.Parse(e.Element("HasObstacles").Value) : false)).ToList();
                 }
                 return _All;
             }

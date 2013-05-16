@@ -44,6 +44,7 @@ namespace MissionMiner
         public bool Level2 = false;
         public bool Level3 = false;
         public bool Level4 = false;
+        public bool Obstacles = false;
     }
 
     #endregion
@@ -235,7 +236,7 @@ namespace MissionMiner
             InsertState(Offload);
             InsertState(PrepWarp);
             InsertState(MineRoid);
-            InsertState(Traveling, 5000);
+            InsertState(Traveling);
             return true;
         }
 
@@ -287,13 +288,29 @@ namespace MissionMiner
             if (window.HasButton(Window.Button.Accept))
             {
                 AgentMission NewMission = AgentMission.All.First(m => m.AgentID == CurrentAgent.ID);
-                EVEFrame.Log(NewMission.Name);
                 MissionData NewMissionData = MissionData.All.FirstOrDefault(m => m.Name == NewMission.Name);
                 if (NewMissionData != null)
                 {
-                    Console.Log("|oAccepting mission");
-                    Console.Log(" |-g{0}", NewMission.Name);
-                    window.ClickButton(Window.Button.Accept);
+                    if (!Config.Obstacles && NewMissionData.Obstacles)
+                    {
+                        if (NextDecline.ContainsKey(CurrentAgent) && NextDecline[CurrentAgent] > DateTime.Now)
+                        {
+                            Console.Log(" |-gUnable to declining mission - on cooldown");
+                            CurrentAgent = null;
+                            QueueState(CheckForMissions);
+                            return true;
+                        }
+
+                        Console.Log(" |-gDeclining mission");
+                        window.ClickButton(Window.Button.Decline);
+                        NextDecline.AddOrUpdate(CurrentAgent, DateTime.Now.AddHours(4));
+                    }
+                    else
+                    {
+                        Console.Log("|oAccepting mission");
+                        Console.Log(" |-g{0}", NewMission.Name);
+                        window.ClickButton(Window.Button.Accept);
+                    }
                 }
                 else
                 {
@@ -307,6 +324,7 @@ namespace MissionMiner
                     if (NextDecline.ContainsKey(CurrentAgent) && NextDecline[CurrentAgent] > DateTime.Now)
                     {
                         Console.Log(" |-gUnable to declining mission - on cooldown");
+                        CurrentAgent = null;
                         QueueState(CheckForMissions);
                         return true;
                     }
@@ -318,7 +336,6 @@ namespace MissionMiner
                 return false;
             }
             CurrentMission = AgentMission.All.FirstOrDefault(m => m.AgentID == CurrentAgent.ID);
-            AgentMission.All.ForEach(m => EVEFrame.Log(m.Name + " " + m.AgentID));
             if (CurrentMission != null && CurrentMission.State == AgentMission.MissionState.Accepted)
             {
                 CurrentMissionData = MissionData.All.First(m => m.Name == CurrentMission.Name);
@@ -326,7 +343,6 @@ namespace MissionMiner
                 QueueState(CheckMissionCompletion);
                 return true;
             }
-            EVEFrame.Log("Huh?");
             
             return false;
         }
@@ -452,7 +468,6 @@ namespace MissionMiner
         {
             if (Busy.Instance.IsBusy)
             {
-                DroneControl.Instance.Pause();
                 return false;
             }
             return true;

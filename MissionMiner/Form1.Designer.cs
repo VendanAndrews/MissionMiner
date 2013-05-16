@@ -47,6 +47,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.checkActive = new System.Windows.Forms.CheckBox();
             this.checkStopOnComplete = new System.Windows.Forms.CheckBox();
+            this.checkObstacles = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -98,6 +99,7 @@
             // richConsole
             // 
             this.richConsole.BackColor = System.Drawing.Color.Black;
+            this.richConsole.Font = new System.Drawing.Font("Consolas", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richConsole.ForeColor = System.Drawing.Color.White;
             this.richConsole.Location = new System.Drawing.Point(6, 26);
             this.richConsole.Name = "richConsole";
@@ -107,6 +109,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkObstacles);
             this.tabPage2.Controls.Add(this.checkAlwaysOnTop);
             this.tabPage2.Controls.Add(this.checkUnknownMissionHalt);
             this.tabPage2.Controls.Add(this.btnOptimizer);
@@ -124,9 +127,9 @@
             // checkAlwaysOnTop
             // 
             this.checkAlwaysOnTop.AutoSize = true;
-            this.checkAlwaysOnTop.Location = new System.Drawing.Point(203, 68);
+            this.checkAlwaysOnTop.Location = new System.Drawing.Point(301, 68);
             this.checkAlwaysOnTop.Name = "checkAlwaysOnTop";
-            this.checkAlwaysOnTop.Size = new System.Drawing.Size(92, 17);
+            this.checkAlwaysOnTop.Size = new System.Drawing.Size(90, 17);
             this.checkAlwaysOnTop.TabIndex = 5;
             this.checkAlwaysOnTop.Text = "Always on top";
             this.checkAlwaysOnTop.UseVisualStyleBackColor = true;
@@ -135,9 +138,9 @@
             // checkUnknownMissionHalt
             // 
             this.checkUnknownMissionHalt.AutoSize = true;
-            this.checkUnknownMissionHalt.Location = new System.Drawing.Point(12, 68);
+            this.checkUnknownMissionHalt.Location = new System.Drawing.Point(12, 91);
             this.checkUnknownMissionHalt.Name = "checkUnknownMissionHalt";
-            this.checkUnknownMissionHalt.Size = new System.Drawing.Size(162, 17);
+            this.checkUnknownMissionHalt.Size = new System.Drawing.Size(159, 17);
             this.checkUnknownMissionHalt.TabIndex = 4;
             this.checkUnknownMissionHalt.Text = "Halt bot on unknown mission";
             this.checkUnknownMissionHalt.UseVisualStyleBackColor = true;
@@ -254,6 +257,17 @@
             this.checkStopOnComplete.UseVisualStyleBackColor = true;
             this.checkStopOnComplete.CheckedChanged += new System.EventHandler(this.checkStopOnComplete_CheckedChanged);
             // 
+            // checkObstacles
+            // 
+            this.checkObstacles.AutoSize = true;
+            this.checkObstacles.Location = new System.Drawing.Point(12, 68);
+            this.checkObstacles.Name = "checkObstacles";
+            this.checkObstacles.Size = new System.Drawing.Size(153, 17);
+            this.checkObstacles.TabIndex = 6;
+            this.checkObstacles.Text = "Run missions with obstacles";
+            this.checkObstacles.UseVisualStyleBackColor = true;
+            this.checkObstacles.CheckedChanged += new System.EventHandler(this.checkObstacles_CheckedChanged);
+            // 
             // MissionMinerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -297,6 +311,7 @@
         private System.Windows.Forms.CheckBox checkAlwaysOnTop;
         private System.Windows.Forms.CheckBox checkActive;
         private System.Windows.Forms.CheckBox checkStopOnComplete;
+        private System.Windows.Forms.CheckBox checkObstacles;
     }
 }
 

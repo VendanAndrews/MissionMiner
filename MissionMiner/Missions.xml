@@ -49,18 +49,21 @@
     <Asteroid>Banidine</Asteroid>
     <Volume>1800</Volume>
     <VolumePerRoid>1337</VolumePerRoid>
+    <HasObstacles>true</HasObstacles>
   </Mission>
   <Mission>
     <Name>Understanding Augumene</Name>
     <Asteroid>Augumene</Asteroid>
     <Volume>2250</Volume>
     <VolumePerRoid>1337</VolumePerRoid>
+    <HasObstacles>true</HasObstacles>
   </Mission>
   <Mission>
     <Name>Down and Dirty</Name>
     <Asteroid>Augumene</Asteroid>
     <Volume>2250</Volume>
     <VolumePerRoid>1337</VolumePerRoid>
+    <HasObstacles>true</HasObstacles>
   </Mission>
   <Mission>
     <Name>Mercium Belt</Name>
@@ -71,7 +74,7 @@
   <Mission>
     <Name>Unknown Events</Name>
     <Asteroid>Lyavite</Asteroid>
-    <Volume>5000</Volume>
+    <Volume>6000</Volume>
     <VolumePerRoid>1337</VolumePerRoid>
   </Mission>
   

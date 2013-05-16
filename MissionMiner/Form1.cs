@@ -46,6 +46,7 @@ namespace MissionMiner
             checkLevel4.Checked = Config.Level4;
             checkUnknownMissionHalt.Checked = Config.UnknownMissionHalt;
             checkAlwaysOnTop.Checked = Config.AlwaysOnTop;
+            checkObstacles.Checked = Config.Obstacles;
             this.TopMost = Config.AlwaysOnTop;
         }
 
@@ -163,6 +164,12 @@ namespace MissionMiner
             {
                 miner.Stop();
             }
+        }
+
+        private void checkObstacles_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.Obstacles = checkObstacles.Checked;
+            Config.Save();
         }
 
     }
