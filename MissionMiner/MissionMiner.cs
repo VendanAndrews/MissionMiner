@@ -18,7 +18,7 @@ namespace MissionMiner
 
     class MissionMinerUIData : State
     {
-        public Dictionary<string, int> Agents;
+        public string Name { get; set; }
         public void GetData(Action CallBack)
         {
             QueueState(GetDataState, 1, CallBack);
@@ -26,7 +26,7 @@ namespace MissionMiner
 
         public bool GetDataState(object[] Params)
         {
-            Agents = Agent.MyAgents.ToDictionary(a => a.Name, a => a.ID);
+            Name = Me.Name;
             ((Action)Params[0])();
             return true;
         }

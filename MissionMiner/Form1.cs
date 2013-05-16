@@ -31,7 +31,7 @@ namespace MissionMiner
             aMenu.Items.Add(Shrink);
             Shrink.Text = "Shrink";
             Shrink.Click += new EventHandler(Shrink_Click);
-            //uiData.GetData(() => this.Invoke(GetUIData));
+            uiData.GetData(() => this.Invoke(GetUIData));
 
             LoadSettings();
 
@@ -66,7 +66,7 @@ namespace MissionMiner
 
         public void GetUIData()
         {
-            //cbxAgents.Items.AddRange(uiData.Agents.Select(a => new { Name = a.Key, ID = a.Value }).ToArray());
+            this.Text = "Mission Miner - " + uiData.Name;
         }
 
         delegate void SetConsoleUpdate(string Module, string Message);
