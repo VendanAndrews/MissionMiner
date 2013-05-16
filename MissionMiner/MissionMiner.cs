@@ -468,7 +468,7 @@ namespace MissionMiner
 
         public bool PrepWarp(object[] Params)
         {
-            if (Busy.Instance.IsBusy)
+            if (Busy.Instance.IsBusy || Drone.AllInSpace.Any())
             {
                 return false;
             }
